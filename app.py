@@ -3,12 +3,11 @@ import os
 import gdown
 import requests
 from moviepy.editor import VideoFileClip, CompositeVideoClip
-from PIL import Image
+from moviepy.config import change_settings
+import logging
 
-# Check and set the correct resampling filter
-resampling_filter = getattr(Image, 'Resampling', None)
-if resampling_filter is None:
-    resampling_filter = Image.LANCZOS
+# Set moviepy settings to use ffmpeg in the current environment
+change_settings({"FFMPEG_BINARY": "ffmpeg"})
 
 app = Flask(__name__)
 
@@ -52,9 +51,9 @@ def overlay_videos():
 
         return send_file(output_path, as_attachment=True)
     except Exception as e:
-        # Log the error
         app.logger.error(f"Error processing video: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
