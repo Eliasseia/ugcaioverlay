@@ -25,15 +25,15 @@ def overlay_videos():
         video_2_path = "video2.mp4"
         output_path = "output.mp4"
 
-        # Download the first video
+        app.logger.info("Downloading video 1 from URL: %s", url_1)
         gdown.download(url_1, video_1_path, quiet=False)
 
-        # Download the second video
+        app.logger.info("Downloading video 2 from URL: %s", url_2)
         response_2 = requests.get(url_2)
         with open(video_2_path, 'wb') as f:
             f.write(response_2.content)
 
-        # Overlay the videos using ffmpeg
+        app.logger.info("Overlaying videos using ffmpeg")
         command = [
             'ffmpeg', '-i', video_1_path, '-i', video_2_path,
             '-filter_complex', '[1:v]scale=250:-1[ovr];[0:v][ovr]overlay=10:10',
@@ -41,9 +41,10 @@ def overlay_videos():
         ]
         subprocess.run(command, check=True)
 
+        app.logger.info("Overlay complete, sending file: %s", output_path)
         return send_file(output_path, as_attachment=True)
     except Exception as e:
-        app.logger.error(f"Error processing video: {e}")
+        app.logger.error("Error processing video: %s", e)
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
