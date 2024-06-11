@@ -14,6 +14,14 @@ app.get('/', (req, res) => {
 });
 
 app.post('/overlay', upload.fields([{ name: 'video1' }, { name: 'video2' }]), (req, res) => {
+    console.log('Received a POST request to /overlay');
+    console.log('Files:', req.files);
+
+    if (!req.files || !req.files.video1 || !req.files.video2) {
+        console.error('Missing files in request');
+        return res.status(400).send('Both video1 and video2 files are required');
+    }
+
     const video1Path = req.files.video1[0].path;
     const video2Path = req.files.video2[0].path;
     const outputPath = path.join('output', 'output.mp4');
@@ -24,6 +32,7 @@ app.post('/overlay', upload.fields([{ name: 'video1' }, { name: 'video2' }]), (r
         .complexFilter('[0:v][1:v] overlay=0:0')
         .save(outputPath)
         .on('end', () => {
+            console.log('Video processing completed');
             res.download(outputPath, 'output.mp4', (err) => {
                 if (err) {
                     console.error(`Error sending file: ${err.message}`);
