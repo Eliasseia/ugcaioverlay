@@ -3,6 +3,13 @@ import os
 import gdown
 import requests
 from moviepy.editor import VideoFileClip, CompositeVideoClip
+from PIL import Image
+
+# Map the old ANTIALIAS to LANCZOS for compatibility with newer Pillow versions
+if hasattr(Image, 'Resampling'):
+    resample = Image.Resampling.LANCZOS
+else:
+    resample = Image.LANCZOS
 
 app = Flask(__name__)
 
@@ -52,3 +59,4 @@ def overlay_videos():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
