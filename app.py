@@ -5,8 +5,8 @@ import requests
 from moviepy.editor import VideoFileClip, CompositeVideoClip
 from PIL import Image
 
-# Alias for ANTIALIAS in newer versions of Pillow
-Image.Resampling = Image.Resampling if hasattr(Image, 'Resampling') else Image
+# Use the correct Resampling attribute for resizing
+resampling_attr = Image.LANCZOS if hasattr(Image, 'LANCZOS') else Image.Resampling.LANCZOS
 
 app = Flask(__name__)
 
@@ -34,7 +34,7 @@ def overlay_videos():
 
         # Load the videos
         main_clip = VideoFileClip(video_1_path)
-        overlay_clip = VideoFileClip(video_2_path).resize(width=250)  # Resize overlay video
+        overlay_clip = VideoFileClip(video_2_path).resize(width=250, resample=resampling_attr)  # Resize overlay video
 
         # Position the overlay clip
         overlay_clip = overlay_clip.set_position((10, 10))  # Set position (x, y)
