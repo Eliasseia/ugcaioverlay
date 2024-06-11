@@ -2,7 +2,7 @@ from flask import Flask, request, send_file, jsonify
 import os
 import gdown
 import requests
-from moviepy.editor import VideoFileClip, CompositeVideoClip
+import subprocess
 import logging
 
 # Configure logging
@@ -33,18 +33,13 @@ def overlay_videos():
         with open(video_2_path, 'wb') as f:
             f.write(response_2.content)
 
-        # Load the videos
-        main_clip = VideoFileClip(video_1_path)
-        overlay_clip = VideoFileClip(video_2_path).resize(width=250)  # Resize overlay video
-
-        # Position the overlay clip
-        overlay_clip = overlay_clip.set_position((10, 10))  # Set position (x, y)
-
-        # Create the composite video
-        final_clip = CompositeVideoClip([main_clip, overlay_clip])
-
-        # Write the result to a file
-        final_clip.write_videofile(output_path, codec="libx264")
+        # Overlay the videos using ffmpeg
+        command = [
+            'ffmpeg', '-i', video_1_path, '-i', video_2_path,
+            '-filter_complex', '[1:v]scale=250:-1[ovr];[0:v][ovr]overlay=10:10',
+            '-codec:a', 'copy', output_path
+        ]
+        subprocess.run(command, check=True)
 
         return send_file(output_path, as_attachment=True)
     except Exception as e:
@@ -53,4 +48,3 @@ def overlay_videos():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
