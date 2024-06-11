@@ -9,6 +9,10 @@ OUTPUT_FOLDER = 'output'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
+@app.route('/')
+def home():
+    return 'Video overlay service is running.'
+
 @app.route('/overlay', methods=['POST'])
 def overlay_videos():
     video1 = request.files.get('video1')
