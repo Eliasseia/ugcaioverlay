@@ -3,11 +3,10 @@ import os
 import gdown
 import requests
 from moviepy.editor import VideoFileClip, CompositeVideoClip
-from moviepy.config import change_settings
 import logging
 
-# Set moviepy settings to use ffmpeg in the current environment
-change_settings({"FFMPEG_BINARY": "ffmpeg"})
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
@@ -24,6 +23,7 @@ def overlay_videos():
 
         video_1_path = "video1.mov"
         video_2_path = "video2.mp4"
+        output_path = "output.mp4"
 
         # Download the first video
         gdown.download(url_1, video_1_path, quiet=False)
@@ -42,9 +42,6 @@ def overlay_videos():
 
         # Create the composite video
         final_clip = CompositeVideoClip([main_clip, overlay_clip])
-
-        # Output file path
-        output_path = "output.mp4"
 
         # Write the result to a file
         final_clip.write_videofile(output_path, codec="libx264")
