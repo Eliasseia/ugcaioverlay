@@ -6,6 +6,10 @@ from moviepy.editor import VideoFileClip, CompositeVideoClip
 
 app = Flask(__name__)
 
+@app.route('/')
+def index():
+    return "Hello, World! The Flask app is running."
+
 @app.route('/overlay_videos', methods=['POST'])
 def overlay_videos():
     data = request.json
