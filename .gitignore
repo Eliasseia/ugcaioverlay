@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+env/
+venv/
+instance/
+.webassets-cache
+output.mp4
+video1.mov
+video2.mp4
